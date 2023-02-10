@@ -15,13 +15,13 @@ import (
 )
 
 func main() {
-// export AZURE_COSMOS_ENDPOINT="https://cosmos-demo-bg.documents.azure.com:443/"
-// export AZURE_COSMOS_KEY="z92n0hfYBMmcn0qyq2gdYuCkpRazejxw5zPQVzg0OhZSQGCWuJOXzX4LYKvJnyQT8R3LhWmx9oKGrwdvzYDHlw=="
+	// export AZURE_COSMOS_ENDPOINT=""
+	// export AZURE_COSMOS_KEY=""
 
-//	client, err := createClientAAD()
-//	if err != nil {
-//		log.Fatal("Failed to create client: ", err)
-//	}
+	//	client, err := createClientAAD()
+	//	if err != nil {
+	//		log.Fatal("Failed to create client: ", err)
+	//	}
 
 	endpoint := os.Getenv("AZURE_COSMOS_ENDPOINT")
 	if endpoint == "" {
@@ -36,7 +36,7 @@ func main() {
 	var databaseName = "adventureworks"
 	var containerName = "customer"
 	var partitionKeyPath = "/customerId"
-	
+
 	item := struct {
 		ID           string `json:"id"`
 		CustomerId   string `json:"customerId"`
@@ -54,10 +54,10 @@ func main() {
 		LastName:     "Hayes",
 		EmailAddress: "luke12@adventure-works.com",
 		PhoneNumber:  "879-555-0197",
-		CreationDate: time.Now().UTC().Format("2006-01-02T15:04:05.1234567Z"),//cosmos db recommended date format
+		CreationDate: time.Now().UTC().Format("2006-01-02T15:04:05.1234567Z"), //cosmos db recommended date format
 	}
-	
-	// Map 
+
+	// Map
 	/* item := map[string]interface{}{
 		"id":           "1",
 		"customerId":   "1",
@@ -78,14 +78,14 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to create cosmos db client: ", err)
 	}
-	
+
 	// CRUD functions
 	err = createDatabase(client, databaseName)
 	if err != nil {
 		log.Printf("createDatabase failed: %s\n", err)
 	}
 
-	// 
+	//
 	err = createContainer(client, databaseName, containerName, partitionKeyPath)
 	if err != nil {
 		log.Printf("createContainer failed: %s\n", err)
@@ -110,8 +110,7 @@ func main() {
 	if err != nil {
 		log.Printf("upsertItem failed: %s\n", err)
 	}
-	
-	
+
 	err = deleteItem(client, databaseName, containerName, item.CustomerId, item.ID)
 	if err != nil {
 		log.Printf("deleteItem failed: %s\n", err)
@@ -123,7 +122,7 @@ func main() {
 }
 
 func createDatabase(client *azcosmos.Client, databaseName string) error {
-//	databaseName := "adventureworks"
+	//	databaseName := "adventureworks"
 
 	// This is a helper function that swallows 409 errors
 	errorIs409 := func(err error) bool {
@@ -147,9 +146,9 @@ func createDatabase(client *azcosmos.Client, databaseName string) error {
 }
 
 func createContainer(client *azcosmos.Client, databaseName, containerName, partitionKeyPath string) error {
-//	databaseName = adventureworks
-//	containerName = customer
-//	partitionKeyPath = "/customerId"
+	//	databaseName = adventureworks
+	//	containerName = customer
+	//	partitionKeyPath = "/customerId"
 
 	databaseClient, err := client.NewDatabase(databaseName)
 	if err != nil {
@@ -177,7 +176,7 @@ func createContainer(client *azcosmos.Client, databaseName, containerName, parti
 	}
 	ctx := context.TODO()
 	containerResponse, err := databaseClient.CreateContainer(ctx, containerProperties, options)
-	
+
 	switch {
 	case errorIs409(err):
 		log.Printf("Container [%s] already exists\n", containerName)
@@ -190,30 +189,30 @@ func createContainer(client *azcosmos.Client, databaseName, containerName, parti
 }
 
 func createItem(client *azcosmos.Client, databaseName, containerName, partitionKey string, item any) error {
-//	databaseName = "adventureworks"
-//	containerName = "customer"
-//	partitionKey = "1"
+	//	databaseName = "adventureworks"
+	//	containerName = "customer"
+	//	partitionKey = "1"
 
-/*	item = struct {
-		ID           string `json:"id"`
-		CustomerId   string `json:"customerId"`
-		Title        string
-		FirstName    string
-		LastName     string
-		EmailAddress string
-		PhoneNumber  string
-		CreationDate string
-	}{
-		ID:           "1",
-		CustomerId:   "1",
-		Title:        "Mr",
-		FirstName:    "Luke",
-		LastName:     "Hayes",
-		EmailAddress: "luke12@adventure-works.com",
-		PhoneNumber:  "879-555-0197",
-		CreationDate: "2014-02-25T00:00:00",
-	}
-*/
+	/*	item = struct {
+			ID           string `json:"id"`
+			CustomerId   string `json:"customerId"`
+			Title        string
+			FirstName    string
+			LastName     string
+			EmailAddress string
+			PhoneNumber  string
+			CreationDate string
+		}{
+			ID:           "1",
+			CustomerId:   "1",
+			Title:        "Mr",
+			FirstName:    "Luke",
+			LastName:     "Hayes",
+			EmailAddress: "luke12@adventure-works.com",
+			PhoneNumber:  "879-555-0197",
+			CreationDate: "2014-02-25T00:00:00",
+		}
+	*/
 	// create container client
 	containerClient, err := client.NewContainer(databaseName, containerName)
 	if err != nil {
@@ -240,7 +239,7 @@ func createItem(client *azcosmos.Client, databaseName, containerName, partitionK
 
 	ctx := context.TODO()
 	itemResponse, err := containerClient.CreateItem(ctx, pk, b, &itemOptions)
-	
+
 	switch {
 	case errorIs409(err):
 		log.Printf("Item with partitionkey value %s already exists\n", pk)
@@ -249,15 +248,15 @@ func createItem(client *azcosmos.Client, databaseName, containerName, partitionK
 	default:
 		log.Printf("Status %d. Item %v created. ActivityId %s. Consuming %v Request Units.\n", itemResponse.RawResponse.StatusCode, pk, itemResponse.ActivityID, itemResponse.RequestCharge)
 	}
-	
+
 	return nil
 }
 
 func readItem(client *azcosmos.Client, databaseName, containerName, partitionKey, itemId string) error {
-//	databaseName = "adventureworks"
-//	containerName = "customer"
-//	partitionKey = "1"
-//	itemId = "1"
+	//	databaseName = "adventureworks"
+	//	containerName = "customer"
+	//	partitionKey = "1"
+	//	itemId = "1"
 
 	// Create container client
 	containerClient, err := client.NewContainer(databaseName, containerName)
@@ -304,10 +303,10 @@ func readItem(client *azcosmos.Client, databaseName, containerName, partitionKey
 }
 
 func deleteItem(client *azcosmos.Client, databaseName, containerName, partitionKey, itemId string) error {
-//	databaseName = "adventureworks"
-//	containerName = "customer"
-//	partitionKey = "1"
-//	itemId = "1"
+	//	databaseName = "adventureworks"
+	//	containerName = "customer"
+	//	partitionKey = "1"
+	//	itemId = "1"
 
 	// Create container client
 	containerClient, err := client.NewContainer(databaseName, containerName)
@@ -330,32 +329,32 @@ func deleteItem(client *azcosmos.Client, databaseName, containerName, partitionK
 	return nil
 }
 
-func replaceItem(client *azcosmos.Client, databaseName, containerName, partitionKey, itemID string, item any) (error) {
-//	databaseName = "adventureworks"
-//	containerName = "customer"
-//	partitionKey = "1"
-//	itemId = "1"
+func replaceItem(client *azcosmos.Client, databaseName, containerName, partitionKey, itemID string, item any) error {
+	//	databaseName = "adventureworks"
+	//	containerName = "customer"
+	//	partitionKey = "1"
+	//	itemId = "1"
 
-/*	item = struct {
-		ID           string `json:"id"`
-		CustomerId   string `json:"customerId"`
-		Title        string
-		FirstName    string
-		LastName     string
-		EmailAddress string
-		PhoneNumber  string
-		CreationDate string
-	}{
-		ID:           "1",
-		CustomerId:   "2",
-		Title:        "Mr",
-		FirstName:    "Luke",
-		LastName:     "Hayes",
-		EmailAddress: "luke12@adventure-works.com",
-		PhoneNumber:  "879-555-0197",
-		CreationDate: "2014-02-25T00:00:00",
-	}
-*/
+	/*	item = struct {
+			ID           string `json:"id"`
+			CustomerId   string `json:"customerId"`
+			Title        string
+			FirstName    string
+			LastName     string
+			EmailAddress string
+			PhoneNumber  string
+			CreationDate string
+		}{
+			ID:           "1",
+			CustomerId:   "2",
+			Title:        "Mr",
+			FirstName:    "Luke",
+			LastName:     "Hayes",
+			EmailAddress: "luke12@adventure-works.com",
+			PhoneNumber:  "879-555-0197",
+			CreationDate: "2014-02-25T00:00:00",
+		}
+	*/
 	// Create container client
 	containerClient, err := client.NewContainer(databaseName, containerName)
 	if err != nil {
@@ -381,21 +380,21 @@ func replaceItem(client *azcosmos.Client, databaseName, containerName, partition
 		errors.As(err, &responseErr)
 		log.Fatal(responseErr)
 	}
-	
+
 	fmt.Printf("Updated item with customerId %s\n", partitionKey)
 	fmt.Printf("%s\n", b)
 
 	log.Printf("Status %d. Item %v updated ActivityId %s. Consuming %v Request Units.\n", itemResponse.RawResponse.StatusCode, pk, itemResponse.ActivityID, itemResponse.RequestCharge)
-	
+
 	return nil
 }
 
-func upsertItem(client *azcosmos.Client, databaseName, containerName, partitionKey, itemID string, item any) (error) {
+func upsertItem(client *azcosmos.Client, databaseName, containerName, partitionKey, itemID string, item any) error {
 	//	databaseName = "adventureworks"
 	//	containerName = "customer"
 	//	partitionKey = "2"
 	//	itemId = "1"
-	
+
 	/*	item = struct {
 			ID           string `json:"id"`
 			CustomerId   string `json:"customerId"`
@@ -416,34 +415,34 @@ func upsertItem(client *azcosmos.Client, databaseName, containerName, partitionK
 			CreationDate: "2014-02-25T00:00:00",
 		}
 	*/
-		// Create container client
-		containerClient, err := client.NewContainer(databaseName, containerName)
-		if err != nil {
-			return fmt.Errorf("failed to create a container client:: %s", err)
-		}
-	
-		pk := azcosmos.NewPartitionKeyString(partitionKey)
-	
-		b, err := json.MarshalIndent(item, "", "    ")
-		if err != nil {
-			return err
-		}
-	
-		ctx := context.TODO()
-		itemResponse, err := containerClient.UpsertItem(ctx, pk, b, nil /*options*/)
-		if err != nil {
-			var responseErr *azcore.ResponseError
-			errors.As(err, &responseErr)
-			log.Fatal(responseErr)
-		}
-		
-		fmt.Printf("Upserted item with customerId %s\n", partitionKey)
-		fmt.Printf("%s\n", b)
-	
-		log.Printf("Status %d. Item %v upserted ActivityId %s. Consuming %v Request Units.\n", itemResponse.RawResponse.StatusCode, pk, itemResponse.ActivityID, itemResponse.RequestCharge)
-		
-		return nil
+	// Create container client
+	containerClient, err := client.NewContainer(databaseName, containerName)
+	if err != nil {
+		return fmt.Errorf("failed to create a container client:: %s", err)
 	}
+
+	pk := azcosmos.NewPartitionKeyString(partitionKey)
+
+	b, err := json.MarshalIndent(item, "", "    ")
+	if err != nil {
+		return err
+	}
+
+	ctx := context.TODO()
+	itemResponse, err := containerClient.UpsertItem(ctx, pk, b, nil /*options*/)
+	if err != nil {
+		var responseErr *azcore.ResponseError
+		errors.As(err, &responseErr)
+		log.Fatal(responseErr)
+	}
+
+	fmt.Printf("Upserted item with customerId %s\n", partitionKey)
+	fmt.Printf("%s\n", b)
+
+	log.Printf("Status %d. Item %v upserted ActivityId %s. Consuming %v Request Units.\n", itemResponse.RawResponse.StatusCode, pk, itemResponse.ActivityID, itemResponse.RequestCharge)
+
+	return nil
+}
 
 func readMany(client *azcosmos.Client, databaseName, containerName, partitionKey string) error {
 	customerId := "2"
