@@ -2,7 +2,13 @@ package main
 
 import (
 	"fmt"
+	"log"
 )
+
+type User struct {
+	Firstname string
+	Lastname  string
+}
 
 func main() {
 	colors := map[string]string{
@@ -11,7 +17,19 @@ func main() {
 		"white": "ffffff",
 	}
 
+	myMap := make(map[string]User)
+
+	me := User{
+		Firstname: "Ben",
+		Lastname:  "Griffin",
+	}
+
+	myMap["me"] = me
+
+	log.Println(myMap["me"].Firstname)
+
 	printMap(colors)
+
 }
 
 func printMap(c map[string]string) {
