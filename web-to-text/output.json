@@ -1,0 +1,56 @@
+{
+    "title": "Database commands",
+    "description": "Azure Cosmos DB for MongoDB supports the following database commands.",
+    "sub_title": "Query and write operation commands",
+    "commands": [
+      {
+        "command": "change streams",
+        "supported": "Yes"
+      },
+      {
+        "command": "delete",
+        "supported": "Yes"
+      },
+      {
+        "command": "eval",
+        "supported": "No"
+      },
+      {
+        "command": "find",
+        "supported": "Yes"
+      },
+      {
+        "command": "findAndModify",
+        "supported": "Yes"
+      },
+      {
+        "command": "getLastError",
+        "supported": "Yes"
+      },
+      {
+        "command": "getMore",
+        "supported": "Yes"
+      },
+      {
+        "command": "getPrevError",
+        "supported": "No"
+      },
+      {
+        "command": "insert",
+        "supported": "Yes"
+      },
+      {
+        "command": "parallelCollectionScan",
+        "supported": "No"
+      },
+      {
+        "command": "resetError",
+        "supported": "No"
+      },
+      {
+        "command": "update",
+        "supported": "Yes"
+      }
+    ]
+  }
+  
